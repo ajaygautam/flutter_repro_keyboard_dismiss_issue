@@ -2,6 +2,8 @@
 
 Reproduction of issue at https://github.com/MisterJimson/flutter_keyboard_visibility/issues/37
 
+PS: Looks like this issue is not happening with package `keyboard_visibility`. Updated the app to support both `keyboard_visibility` and `flutter_keyboard_visibility`. In `main.dart`, if `switchToKeyboardVisibility`... is set true... the app will use `keyboard_visibility` package. If false, the app will use `flutter_keyboard_visibility`.
+
 Device: iPhone 11 Pro Max, iOS 14.3 
 
 Dev machine: MacBook Air M1 2020, macOS Big Sur v11.1
