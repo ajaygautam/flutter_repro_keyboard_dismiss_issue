@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 void main() => runApp(MyApp());
+
+bool switchToKeyboardVisibility = true;
 
 class MyApp extends StatelessWidget {
   @override
@@ -29,31 +32,67 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class RouteWithKeyboardVisibilityBuilder extends StatelessWidget {
+class RouteWithKeyboardVisibilityBuilder extends StatefulWidget {
   final String title;
 
-  const RouteWithKeyboardVisibilityBuilder({Key key, this.title = "RouteWithKeyboardVisibilityBuilder"})
-      : super(key: key);
+  RouteWithKeyboardVisibilityBuilder({Key key, this.title = "RouteWithKeyboardVisibilityBuilder"}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _RouteWithKeyboardVisibilityBuilderState();
+}
+
+class _RouteWithKeyboardVisibilityBuilderState extends State<RouteWithKeyboardVisibilityBuilder> {
+  int keyboardListenerId;
+
+  @override
+  void initState() {
+    super.initState();
+    if (switchToKeyboardVisibility) {
+      print("Adding keyboard listener");
+      keyboardListenerId = KeyboardVisibilityNotification().addNewListener(
+        onChange: (bool isKeyboardVisible) {
+          print(
+              "=-=-=-=-=-= Notification from keyboard visibility: --||$isKeyboardVisible||-- for screen with title ${widget.title} =-=-=-=-=-=");
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    if (keyboardListenerId != null) {
+      print("Removing keyboard listener");
+      KeyboardVisibilityNotification().removeListener(keyboardListenerId);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
-      print("=-=-=-=-=-= Building with keyboard visibility set to: --||$isKeyboardVisible||-- for screen with title $title =-=-=-=-=-=");
-      return Material(
-          child: Container(
-              color: Colors.blue[200],
-              child: Center(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                    Text(title),
-                    SizedBox(height: 16),
-                    WidgetWithTextEdit(),
-                    SizedBox(height: 16),
-                    BackNextButtonRow()
-                  ]))));
-    });
+    var widgetBody = Material(
+        child: Container(
+            color: Colors.blue[200],
+            child: Center(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  Text(widget.title),
+                  SizedBox(height: 16),
+                  WidgetWithTextEdit(),
+                  SizedBox(height: 16),
+                  BackNextButtonRow()
+                ]))));
+
+    return Visibility(
+      visible: switchToKeyboardVisibility,
+      child: widgetBody,
+      replacement: KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
+        print(
+            "=-=-=-=-=-= Building with keyboard visibility set to: --||$isKeyboardVisible||-- for screen with title ${widget.title} =-=-=-=-=-=");
+        return widgetBody;
+      }),
+    );
   }
 }
 
