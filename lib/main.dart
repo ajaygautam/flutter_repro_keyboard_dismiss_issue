@@ -4,7 +4,7 @@ import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 void main() => runApp(MyApp());
 
-bool switchToKeyboardVisibility = true;
+bool switchToKeyboardVisibility = false;
 
 class MyApp extends StatelessWidget {
   @override
@@ -77,7 +77,9 @@ class _RouteWithKeyboardVisibilityBuilderState extends State<RouteWithKeyboardVi
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                  Text(widget.title),
+                  Text("Title: ${widget.title}"),
+                  SizedBox(height: 16),
+                  Text("Using KeyboardVisibilityBuilder: ${!switchToKeyboardVisibility}"),
                   SizedBox(height: 16),
                   WidgetWithTextEdit(),
                   SizedBox(height: 16),
